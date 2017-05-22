@@ -8,7 +8,5 @@ public class PowerUp extends GameObject{
 //	Static ArrayList<Items>=new ArrayList<Items>();
 //	Static ArrayList<Enemy> enemies=new ArrayList<Enemy>();
 //	Static Character bunny=new Character();
-	public int test(){
-		retunr 0;
-	}
+
 }

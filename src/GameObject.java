@@ -8,7 +8,7 @@ public abstract class GameObject {
 	}
 	public int getX(){ return this.x; }
 	public int getY(){ return this.y; }
-	public abstract void move();
+	public abstract void update();
 	public void del(){};
 	public boolean collide(int x0, int y0, int tol){
 		if(Math.sqrt(Math.pow(x0-this.x,2)+Math.pow(y0-this.y,2))>=tol) return true;
