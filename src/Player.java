@@ -5,13 +5,12 @@ public class Player extends GameObject {
 	private BufferedImage[] walking={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_walk1.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_walk2.png"))};
 	private BufferedImage[] standing={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_stand.png"))};
-	//get in sprite index associated with string name to store BufferedImage
+	//get in sprite index associated with string name, then pass in index to get approriate BufferedImage
 	private Animation walk=new Animation(walking, 10);
 	private Animation stand=new Animation(standing, 10);
 	private Animation curAnimation=stand;
-	public Player(int x, int y, int type) {
-		super(x, y, type);
-		// TODO Auto-generated constructor stub
+	public Player(int type, int x, int y) {
+		super(type, x, y, 300, 500);
 	}
 
 	@Override

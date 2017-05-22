@@ -20,7 +20,7 @@ public class Main {
 		myFrame.setVisible(true);
 
 		GamePanel myPanel = new GamePanel();
-		myPanel.setSize(800, 600);
+		myPanel.setSize(600, 800);
 		myPanel.addKeyListener(myPanel);
 		myPanel.requestFocus();
 		myFrame.setContentPane(myPanel);
