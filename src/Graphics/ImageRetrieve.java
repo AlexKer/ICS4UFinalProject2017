@@ -44,8 +44,7 @@ public class ImageRetrieve{
 	}
 	public static int getIndex(String n){
 		for(int i=0;i<spriteNum;i++){
-			System.out.println(n);
-			System.out.println(n+" "+spriteData[i].getAttribute("name"));
+			//System.out.println(n+" "+spriteData[i].getAttribute("name"));
 			if(n.equals(spriteData[i].getAttribute("name"))){ //NULL POINTER
 				return i;
 			}
