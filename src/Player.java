@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import Graphics.Animation;
@@ -14,16 +15,15 @@ public class Player extends GameObject{
 	public Player(int type, int x, int y) {
 		super(type, x, y, 120, 205);
 	}
-	private final int TERMINAL_V=20, GRAVITY=10;
+	private final int TERMINAL_V=10, GRAVITY=2;
 	@Override
+	//move by gravity,
 	public void move() {
+		super.move();
 		vy+=GRAVITY;
 		if(vy>TERMINAL_V){
 			vy=TERMINAL_V;
 		}
-		changeY(-vy);
-		changeX(vx);
-		changeY(vy);
 		curAnimation.updateAnimation();
 	}
 	public void changeVx(int dx){ vx+=dx; }
@@ -44,5 +44,15 @@ public class Player extends GameObject{
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void accelerate() {
+		// TODO Auto-generated method stub
+		
 	}
 }

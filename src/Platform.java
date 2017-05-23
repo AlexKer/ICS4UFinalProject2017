@@ -1,4 +1,6 @@
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
 public class Platform extends GameObject{
@@ -14,6 +16,16 @@ public class Platform extends GameObject{
 		
 	}
 	public Animation getCurAnimation(){ return curAnimation; }
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void accelerate() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }

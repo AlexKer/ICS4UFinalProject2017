@@ -10,8 +10,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private static final long serialVersionUID = 1L;
 	private boolean moveRight, moveLeft;
 	private final int SDV = -10; //Scroll down speed
-	BufferedImage imgBuffer = new BufferedImage(600, 800,
-			BufferedImage.TYPE_INT_ARGB);
+	BufferedImage imgBuffer = new BufferedImage(600, 800, BufferedImage.TYPE_INT_ARGB);
 	Graphics g = imgBuffer.getGraphics();
 	private Player p;
 	private ArrayList<Platform> platforms;
@@ -50,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			else if(moveLeft){ p.changeX(-50); }
 		}
 		//---default movement of player--//
+		hitPlatform();
 		p.move();
 		//move platform down if player is moving up
 		
@@ -79,15 +79,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	public void hitPlatform(){
 		for(int i=0;i<platforms.size();i++){
 			//platform only effective if falling
-			if(p.getVx()>0){
+			if(p.getVy()>0){
 				if(p.collide(platforms.get(i))){
-					p.setVy(SDV);
+					bounce();
+					//p.setVy(SDV);
 					lastPlatform=platforms.get(i);
 				}
 			}
 			if(p.collide((platforms.get(i)))){
 				p.setY(platforms.get(i).getY());
 			}
+		}
+	}
+	public void bounce(){
+		int cnt=-10;
+		while(cnt<0){
+			p.setVy(cnt++);
 		}
 	}
 	
@@ -129,8 +136,5 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyTyped(KeyEvent e) {}
 }
