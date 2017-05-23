@@ -21,9 +21,9 @@ public class Main {
 
 		GamePanel myPanel = new GamePanel();
 		myPanel.setSize(600, 800);
+		myFrame.setContentPane(myPanel);
 		myPanel.addKeyListener(myPanel);
 		myPanel.requestFocus();
-		myFrame.setContentPane(myPanel);
 		
 		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(

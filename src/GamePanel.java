@@ -1,28 +1,25 @@
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-
 import Graphics.ImageRetrieve;
 public class GamePanel extends JPanel implements Runnable, KeyListener{
-	private static final long serialVersionUID = 1L;
 	//TODO gravity, powerup, monster, platform, enemy
-	private double SCALE = 0.5;
+	private static final long serialVersionUID = 1L;
+	private boolean moveRight, moveLeft;
+	private final int SDV = -10; //Scroll down speed
 	BufferedImage imgBuffer = new BufferedImage(600, 800,
 			BufferedImage.TYPE_INT_ARGB);
 	Graphics g = imgBuffer.getGraphics();
-	//!!!!!DO PLAYER AND PLATFORMS, THEN ENEMIES!!!!!
 	private Player p;
 	private ArrayList<Platform> platforms;
 	private ArrayList<Enemy> enemies;
-	private int gameState=1; //GameState 1=StartMenu, 2=InGame, 3=GameOver
+	private int gameState=2; //GameState 1=StartMenu, 2=InGame, 3=GameOver
 	private boolean left, right, up, down, jump, fall;
 	private double moveSpeed, fallSpeed;
+	private int score=0;
 	//constructor
 	public GamePanel(){
 		ImageRetrieve.loadXML();
@@ -38,54 +35,102 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		//ensure one low one
 		platforms.add(new Platform(1,500,200));
 	}
-	public int[] getRandomPosition(int x, int y, int l, int w){
-		int[] a={(int)Math.random()*l, (int)Math.random()*w};
-		return a;
-	}
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void keyPressed(KeyEvent e) {
-		System.out.println("HELLO");
-		int pressed=e.getKeyCode();
-		switch (pressed){
-			case KeyEvent.VK_W:
-			case 38: // up
-				p.setWalkAnimation();
-				System.out.println("WALKING");
-			case KeyEvent.VK_A:
-			case 37: // left
-			
-				break;
-			case KeyEvent.VK_S:
-			case 40: // down
-
-				break;
-			case KeyEvent.VK_D:
-			case 39: // right
-
-				break;
-		}
-	}
-	@Override
-	public void keyReleased(KeyEvent e) {
-		p.getCurAnimation().stop();
-		p.getCurAnimation().reset();
-		p.setStandAnimation();
-	}
 	@Override
 	public void run() {
-		p.update();
+		//enforce border
+		if(p.getX()<0){
+			p.setX(0);
+		}else if(p.getX()>600-120){
+			p.setX(600-120);
+		}
+		//---horizontal movement with left and right arrow keys---//
+		if(moveRight ^ moveLeft){
+			System.out.println("HELLO");
+			if(moveRight){ p.changeX(50); }
+			else if(moveLeft){ p.changeX(-50); }
+		}
+		//---default movement of player--//
+		p.move();
+		//move platform down if player is moving up
+		
+		//if platform moves off the bottom, generate new ones
+		
+		//call monster move method
+		//move platforms horizontally
 	}
 	public void paint(Graphics g) {
-		g.drawImage(p.getCurAnimation().getSprite(), 0, 500, null);
+		switch(gameState){
+		case 1:
+			//g.drawImage(StartScreen, 0, 0, null);
+			break;
+		case 2:
+			//g.drawImage(BackGround, X, Y, null);
+			
+		}
+		g.drawImage(p.getCurAnimation().getSprite(), p.getX(), p.getY(), null);
 		for(int i=0;i<platforms.size();i++){
 			Platform cur=platforms.get(i);
 			g.drawImage(cur.getCurAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
 					cur.getY()-cur.getHeight()/2, cur.getWidth()/2, cur.getHeight()/2, null);
 		}
+	}
+	private Platform lastPlatform;
+	//method to check whether the player hit any platforms
+	public void hitPlatform(){
+		for(int i=0;i<platforms.size();i++){
+			//platform only effective if falling
+			if(p.getVx()>0){
+				if(p.collide(platforms.get(i))){
+					p.setVy(SDV);
+					lastPlatform=platforms.get(i);
+				}
+			}
+			if(p.collide((platforms.get(i)))){
+				p.setY(platforms.get(i).getY());
+			}
+		}
+	}
+	
+	//if player is below screen, hit by enemy, the game is over
+	public void checkGameOver(){
+		
+	}
+	//method to spawn platforms
+	public void generatePlatforms(){
+		
+	}
+	//method to spawn enemies
+	public void spawnEnemies(){
+		
+	}
+	//enemy collision
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int pressed = e.getKeyCode();
+		switch (pressed) {
+		case 37: // left
+			moveLeft = true;
+			break;
+		case 39: // right
+			moveRight = true;
+			break;
+		}
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
+		int pressed = e.getKeyCode();
+		switch (pressed) {
+		case 37: // left
+			moveLeft = false;
+			break;
+		case 39: // right
+			moveRight = false;
+			break;
+		}
+	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

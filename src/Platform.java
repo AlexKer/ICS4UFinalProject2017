@@ -9,7 +9,7 @@ public class Platform extends GameObject{
 	private Animation curAnimation=new Animation(platform, 10);
 
 	@Override
-	public void update() {
+	public void move() {
 		// TODO Auto-generated method stub
 		
 	}
