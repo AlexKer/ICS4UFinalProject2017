@@ -8,21 +8,25 @@ public class Platform extends GameObject{
 	public Platform(int ID, int x, int y) {
 		super(ID, x, y, 300, 94);
 	}
-	private Animation curAnimation=new Animation(platform, 10);
+	private Animation animation=new Animation(platform, 10);
 
 	@Override
 	public void move() {
-		// TODO Auto-generated method stub
-		
+		changeY(5);
 	}
-	public Animation getCurAnimation(){ return curAnimation; }
+	public Animation getAnimation(){ return animation; }
 	@Override
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void accelerate() {
+	public void animate() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void stopAnimate() {
 		// TODO Auto-generated method stub
 		
 	}

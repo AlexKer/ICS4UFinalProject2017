@@ -16,7 +16,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private ArrayList<Platform> platforms;
 	private ArrayList<Enemy> enemies;
 	private int gameState=2; //GameState 1=StartMenu, 2=InGame, 3=GameOver
-	private boolean left, right, up, down, jump, fall;
 	private double moveSpeed, fallSpeed;
 	private int score=0;
 	//constructor
@@ -28,12 +27,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		enemies=new ArrayList<Enemy>();
 		//generate starting platforms randmly
 		for(int i=0;i<10;i++){ 
-			platforms.add(new Platform(1,(int)(Math.random()*600),(int)(Math.random()*800)));
+			generateNewPlatform();
 			System.out.println(platforms.get(i).getX()+" "+platforms.get(i).getY());
 		}
 		//ensure one low one
 		platforms.add(new Platform(1,500,200));
 	}
+	int cnt=100;
 	@Override
 	public void run() {
 		//enforce border
@@ -44,20 +44,47 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 		//---horizontal movement with left and right arrow keys---//
 		if(moveRight ^ moveLeft){
-			System.out.println("HELLO");
 			if(moveRight){ p.changeX(50); }
 			else if(moveLeft){ p.changeX(-50); }
 		}
 		//---default movement of player--//
 		hitPlatform();
 		p.move();
+		if(checkGameOver()){ gameState=3; }
+		
 		//move platform down if player is moving up
-		
+		if(cnt>0){
+			cnt--;
+		}else{
+			if(p.isMovingUp()){
+				for(int i=0;i<platforms.size();i++){
+					platforms.get(i).move();
+				}
+			}
+			cnt=100;
+		}
+		/*
+		 * @param
+		 * 
+		 */
 		//if platform moves off the bottom, generate new ones
-		
+//		for(int i=0;i<platforms.size();i++){
+//			if(platforms.get(i).getY()>800){
+//				generateNewPlatform();
+//			}
+//		}
 		//call monster move method
+		for(int i=0;i<enemies.size();i++){
+			enemies.get(i).animate();
+		}
 		//move platforms horizontally
 	}
+	//precondition none:
+	//post condition: generates a new ranodm platform and adds to the ArrayList of platforms
+	public void generateNewPlatform(){
+		platforms.add(new Platform(1,(int)(Math.random()*600),(int)(Math.random()*800)));
+	}
+	
 	public void paint(Graphics g) {
 		switch(gameState){
 		case 1:
@@ -67,10 +94,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			//g.drawImage(BackGround, X, Y, null);
 			
 		}
-		g.drawImage(p.getCurAnimation().getSprite(), p.getX(), p.getY(), null);
+		g.drawImage(p.getAnimation().getSprite(), p.getX(), p.getY(), null);
 		for(int i=0;i<platforms.size();i++){
 			Platform cur=platforms.get(i);
-			g.drawImage(cur.getCurAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
+			g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
 					cur.getY()-cur.getHeight()/2, cur.getWidth()/2, cur.getHeight()/2, null);
 		}
 	}
@@ -99,16 +126,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	
 	//if player is below screen, hit by enemy, the game is over
-	public void checkGameOver(){
-		
+	public boolean checkGameOver(){
+		if(p.getY()>800){ return true; }
+		return false;
 	}
-	//method to spawn platforms
-	public void generatePlatforms(){
-		
-	}
+	//explain new methods
 	//method to spawn enemies
+	boolean flag=true;
 	public void spawnEnemies(){
-		
+		if(flag){
+			//for now just general monster, need to load
+			//Fly
+			//enemies.add(new Enemy())
+		}else{
+			//Spike
+			//enemies.
+		}
+		flag=!flag;
 	}
 	//enemy collision
 	@Override
@@ -117,9 +151,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		switch (pressed) {
 		case 37: // left
 			moveLeft = true;
+			p.animate();
 			break;
 		case 39: // right
 			moveRight = true;
+			p.animate();
 			break;
 		}
 	}
@@ -129,9 +165,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		switch (pressed) {
 		case 37: // left
 			moveLeft = false;
+			p.stopAnimate();
 			break;
 		case 39: // right
 			moveRight = false;
+			p.stopAnimate();
 			break;
 		}
 	}
