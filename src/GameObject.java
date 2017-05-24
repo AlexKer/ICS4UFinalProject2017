@@ -32,5 +32,6 @@ public abstract class GameObject {
 		this.vy=vy0;
 	}
 	public abstract void draw(Graphics g);
-	public abstract  void accelerate();
+	public abstract void animate();
+	public abstract void stopAnimate();
 }
