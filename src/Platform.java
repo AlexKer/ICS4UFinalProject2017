@@ -5,14 +5,14 @@ import Graphics.Animation;
 import Graphics.ImageRetrieve;
 public class Platform extends GameObject{
 	private BufferedImage[] platform={ImageRetrieve.getSprite(ImageRetrieve.getIndex("ground_grass.png"))};
-	public Platform(int ID, int x, int y) {
-		super(ID, x, y, 300, 94);
+	public Platform(int x, int y) {
+		super(x, y, 300, 94);
 	}
 	private Animation animation=new Animation(platform, 10);
 
 	@Override
 	public void move() {
-		changeY(5);
+		changeY(10);
 	}
 	public Animation getAnimation(){ return animation; }
 	@Override
