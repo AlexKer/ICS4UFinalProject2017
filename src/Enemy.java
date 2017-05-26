@@ -1,10 +1,8 @@
 import java.awt.Graphics;
-
-
 public class Enemy extends GameObject{
-	
-	public Enemy(int x, int y, int type) {
-		super(x, y, type, type, type);
+
+	public Enemy(int x, int y) {
+		super(x, y, 220, 130);
 	}
 	@Override
 	public void move() {
@@ -12,7 +10,10 @@ public class Enemy extends GameObject{
 	}
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
+		
+	}
+	public void checkAttack(){
+		
 		
 	}
 	@Override

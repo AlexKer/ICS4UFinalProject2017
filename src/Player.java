@@ -12,29 +12,35 @@ public class Player extends GameObject{
 	private Animation stand=new Animation(standing, 10);
 	private Animation animation=stand;
 	private boolean moveUp=false;
-	private final int A=-1; private int vx, vy; //A is acceleration
-	public Player(int type, int x, int y) {
-		super(type, x, y, 120, 205);
+	public Player(int x, int y) {
+		super(x, y, 120, 210);
 	}
-	private final int TERMINAL_V=5, GRAVITY=1;
+	private final int TERMINAL_V=10, A=5;
+	private int gCnt=0; //only activate the effects of gravity every few frames
 	@Override
 	//move by gravity,
 	public void move() {
 		super.move();
-		vy+=GRAVITY;
-		if(vy>TERMINAL_V){
-			vy=TERMINAL_V;
+		if(gCnt<10){
+			gCnt++;
+		}else{ 
+			this.changeVy(A);
+			if(this.getVy()>TERMINAL_V){
+				this.setVy(TERMINAL_V);
+			}
+			gCnt=0;
+		}
+//		if(this.isMovingUp()){
+//			this.changeVy(3);
+//		}
+		if(this.getVy()>0){
+			this.toggleMovingUp();
 		}
 		animation.updateAnimation();
 	}
-	public void changeVx(int dx){ vx+=dx; }
-	public void changeVy(int dy){ vy+=dy; }
-	public int getVx(){ return vx; }
-	public int getVy(){ return vy; }
-	public void setVx(int vx0){ vx=vx0; }
-	public void setVy(int vy0){ vy=vy0; }
 	public Animation getAnimation(){ return animation; }
 	public boolean isMovingUp(){ return moveUp; } //if true, moving up, otherwise falling
+	public void toggleMovingUp(){ moveUp=!moveUp; }
 	public void animate(){
 		animation=walk;
 	    animation.start();

@@ -1,21 +1,16 @@
 import java.awt.Graphics;
-
-import Graphics.Animation;
 public abstract class GameObject {
-	//position, vector, dimensions, 
-	private int ID;
+	//position, vector, dimensions
 	private int x, y, width, height;
-	private Animation animation;
 	private int vx, vy;
-	//ID:1=Player,2=FlyMonster,3=SpikeMonster,4=Platform
-	//5=Coin,6Shield,6=Jetpack
-	public GameObject(int iD, int x, int y, int width, int height){
-		 this.ID=iD; this.x=x; this.y=y; this.width=width; this.height=height;
+	public GameObject(int x, int y, int width, int height){
+		 this.x=x; this.y=y; this.width=width; this.height=height;
 	}
 	//movement
 	public void move(){
-		x+=vx;
-		y+=vy;
+		this.x+=vx;
+		this.y+=vy;
+		//System.out.println(x+" "+y);
 	}
 	//getter/accessor
 	public int getX(){ return this.x; }
@@ -31,6 +26,12 @@ public abstract class GameObject {
 		this.vx=vx0;
 		this.vy=vy0;
 	}
+	public void changeVx(int dx){ vx+=dx; }
+	public void changeVy(int dy){ vy+=dy; }
+	public int getVx(){ return vx; }
+	public int getVy(){ return vy; }
+	public void setVx(int vx0){ vx=vx0; }
+	public void setVy(int vy0){ vy=vy0; }
 	public abstract void draw(Graphics g);
 	public abstract void animate();
 	public abstract void stopAnimate();

@@ -2,7 +2,6 @@ import java.awt.image.BufferedImage;
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
 
-
 public class FlyMonster extends Enemy{
 //	private BufferedImage[] flying=new BufferedImage[5];
 //	for(int i=0;i<5;i++){
@@ -13,12 +12,14 @@ public class FlyMonster extends Enemy{
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("wingMan3.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("wingMan4.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("wingMan5.png"))};
-	public FlyMonster(int x, int y, int type) {
-		super(x, y, type);
-		// TODO Auto-generated constructor stub
+	public FlyMonster(int x, int y) {
+		super(x, y);
 	}
 	Animation animation=new Animation(flying, 10);
 	public void animate(){
 	    animation.start();
+	}
+	public void stopAnimate(){
+		animation.stop();
 	}
 }
