@@ -1,6 +1,4 @@
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
 public class Player extends GameObject{
@@ -13,34 +11,25 @@ public class Player extends GameObject{
 	private Animation animation=stand;
 	private boolean moveUp=false;
 	public Player(int x, int y) {
-		super(x, y, 120, 210);
+		super(x, y, 110, 200);
 	}
-	private final int TERMINAL_V=10, A=5;
-	private int gCnt=0; //only activate the effects of gravity every few frames
+	private final int TERMINAL_V=20, A=2;
 	@Override
 	//move by gravity,
 	public void move() {
 		super.move();
-		if(gCnt<10){
-			gCnt++;
-		}else{ 
-			this.changeVy(A);
-			if(this.getVy()>TERMINAL_V){
-				this.setVy(TERMINAL_V);
-			}
-			gCnt=0;
+		this.changeVy(A);
+		if(this.getVy()>TERMINAL_V){
+			this.setVy(TERMINAL_V);
 		}
-//		if(this.isMovingUp()){
-//			this.changeVy(3);
-//		}
 		if(this.getVy()>0){
-			this.toggleMovingUp();
+			this.toggleMovingUp(false);
 		}
 		animation.updateAnimation();
 	}
 	public Animation getAnimation(){ return animation; }
 	public boolean isMovingUp(){ return moveUp; } //if true, moving up, otherwise falling
-	public void toggleMovingUp(){ moveUp=!moveUp; }
+	public void toggleMovingUp(boolean b){ moveUp=b; }
 	public void animate(){
 		animation=walk;
 	    animation.start();
@@ -50,20 +39,14 @@ public class Player extends GameObject{
 	    animation.reset();
 	    animation=stand;
 	}
-	public boolean collide(Object obj){
-		Platform o=(Platform) obj;
+	public boolean collide(GameObject o){
 		if(getX()+getWidth()>=o.getX() && 
 			getX()<=o.getX()+o.getWidth() &&
 			getY()+getHeight()>=o.getY() &&
 			getY()<=o.getY()+o.getHeight()){
-			moveUp=true;
 			return true;
 		}
 		return false;
 	}
-	@Override
-	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

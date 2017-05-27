@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -21,16 +23,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private BufferedImage startMenuScreen, gameOverScreen;
 	private Player p;
 	private ArrayList<Platform> platforms;
-	private ArrayList<Enemy> enemies;
+	private ArrayList<PowerUp> powerUps;
 	private int gameState=2; //GameState 1=StartMenu, 2=InGame, 3=GameOver
 	private int score=0;
+	private boolean playerStart=false;
 	public GamePanel() throws IOException, UnsupportedAudioFileException,
 	LineUnavailableException {
 		ImageRetrieve.loadXML();
 		ImageRetrieve.loadSpriteSheet();
-		p=new Player(0, 1);
+		p=new Player(1, 600);
 		platforms=new ArrayList<Platform>();
-		enemies=new ArrayList<Enemy>();
+		powerUps=new ArrayList<PowerUp>();
 		for(int i=0;i<10;i++){ 
 			generateNewPlatform();
 		}
@@ -40,76 +43,102 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		fileURL=getClass().getResource("Graphics/Game_Over.png");
 		gameOverScreen=ImageIO.read(fileURL);
 		gameState=1;
+		for(int i=0;i<12;i++){
+			platforms.add(new Platform((int)(Math.random()*600),(int)(Math.random()*800)));
+		}
 	}
-	private boolean now=false;
-	int cnt=100;
+	private int numTick=0;
 	@Override
 	public void run() {
 		//enforce border
-		if(p.getX()<0){
-			p.setX(0);
-		}else if(p.getX()>600-120){
-			p.setX(600-120);
+		if(p.getX()<100){
+			p.setX(120);
+		}else if(p.getX()>600-100){
+			p.setX(600-100);
 		}
-		if(p.getY()<0){
-			p.setY(0);
-			p.toggleMovingUp();
+		if(p.getY()<10){
+			p.setY(10);
 		}
 		//---horizontal movement with left and right arrow keys---//
 		//---movement of player--//
-		hitPlatform(); //BUG HERE, bounce up does not work
-		p.move();
-		System.out.println(p.getVy());
+		hitPlatform(); 
+		hitCoin();
+		if(playerStart)
+			p.move();
 		if(moveRight ^ moveLeft){
-			if(moveRight){ p.changeX(20); }
-			else if(moveLeft){ p.changeX(-20); }
+			if(moveRight){ p.changeX(10); }
+			else if(moveLeft){ p.changeX(-10); }
 		}
-		
-		//move platform down if player is moving up
-		if(p.isMovingUp()){
 			for(int i=0;i<platforms.size();i++){
 				platforms.get(i).move();
 			}
-		}
+			for(int i=0;i<powerUps.size();i++){
+				powerUps.get(i).move();
+			}
+		
 		//if platform moves off the bottom, generate new ones
 		for(int i=0;i<platforms.size();i++){
 			if(platforms.get(i).getY()>800){
 				platforms.remove(i);
-				generateNewPlatform();
 			}
 		}
-		//call monster move method
-		//fix monster classes
-		for(int i=0;i<enemies.size();i++){
-			spawnEnemies();
-			enemies.get(i).animate();
+		for(int i=0;i<powerUps.size();i++){
+			if(powerUps.get(i).getY()>800){
+				powerUps.remove(i);
+			}
+		}
+		if(numTick>15){
+			generateNewPlatform();
+			numTick=0;
+		}else{
+			numTick++;
 		}
 		if(checkGameOver()){ 
 			gameState=3; 
 		}
+		System.out.println(p.isMovingUp());
 	}
-	//precondition none:
-	//post condition: generates a new ranodm platform and adds to the ArrayList of platforms
 	public void generateNewPlatform(){
-		platforms.add(new Platform((int)(Math.random()*600),(int)(Math.random()*800)));
+		int platformX = (int)(Math.random()*600);
+		int platformY = -(int)(Math.random()*20);
+		platforms.add(new Platform(platformX,platformY));
+		int chance = 1+(int) (Math.random()*30);
+		if(chance<=15){
+			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 1));
+		}else if(chance>15 && chance<25){
+			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 2));
+		}else{
+			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 3));
+		}
+		powerUps.get(powerUps.size()-1).animate();
 	}
-	
 	public void paint(Graphics g) {
 		switch(gameState){
 		case 1:
 			g.drawImage(startMenuScreen, 0, 0, null);
 			break;
 		case 2:
-			System.out.println(p.getX()+" "+p.getY());
-			g.drawImage(p.getAnimation().getSprite(), p.getX(), p.getY(), null);
+			g.drawImage(p.getAnimation().getSprite(), p.getX()-p.getWidth()/2, 
+					p.getY()-p.getHeight()/2, p.getWidth(), p.getHeight(), null);
 			for(int i=0;i<platforms.size();i++){
 				Platform cur=platforms.get(i);
 				g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
 						cur.getY()-cur.getHeight()/2, cur.getWidth()/2, cur.getHeight()/2, null);
 			}
+			for(int i=0;i<powerUps.size();i++){
+				PowerUp cur=powerUps.get(i);
+				g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
+						cur.getY()-cur.getHeight()/2, cur.getWidth(), cur.getHeight(), null);
+			}
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("Arial", Font.BOLD, 24));
+			g.drawString("Score: " + score, 10, 30);
 			break;
 		case 3:
 			g.drawImage(gameOverScreen, 0, 0, null);
+			g.setColor(Color.WHITE);
+			g.setFont(new Font("Arial", Font.BOLD, 24));
+			g.drawString("Final Score: " + score, 100, 300);
 			break;
 		}
 	}
@@ -117,41 +146,70 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	public void hitPlatform(){
 		for(int i=0;i<platforms.size();i++){
 			//platform only effective if falling
-			if(p.getVy()>0){
+			if(!p.isMovingUp()){
 				if(p.collide(platforms.get(i))){
-					p.toggleMovingUp();
-					bounce();
+					p.toggleMovingUp(true);
+					p.changeVy(-8);
 				}
 			}
 		}
 	}
-	public void bounce(){
-		p.changeVy(-10);
-	}
-	
+	public void hitCoin(){
+		for(int i=0;i<powerUps.size();i++){
+			if(p.collide(powerUps.get(i))){
+				switch(powerUps.get(i).getID()){
+				case 1:
+					score++;
+					break;
+				case 2:
+					score+=2;
+					break;
+				case 3:
+					score+=3;
+					break;
+				}
+				powerUps.remove(i);
+			}
+		}
+	}	
 	//if player is below screen, hit by enemy, the game is over
 	public boolean checkGameOver(){
 		if(p.getY()>800){ return true; }
 		return false;
 	}
-	//explain new methods
-	//method to spawn enemies
-	boolean flag=true;
-	public void spawnEnemies(){
-		if(flag){
-			//Fly
-			enemies.add(new FlyMonster((int)(Math.random()*600),(int)(Math.random()*800)));
-		}else{
-			//Spike
-			enemies.add(new SpikeMonster((int)(Math.random()*600),(int)(Math.random()*800)));
-		}
-		flag=!flag;
-	}
-	//enemy collision
+//    public void resetGame() {
+//        // resets all variables to start new game
+//        Doodle doodle1 = new Doodle(1, 190, 540, 60, 59);
+//        myGuys.set(0, doodle1);
+//        score = 0;
+//        level = 0;
+//        nameEntered = false;
+//
+//        myBullets = new ArrayList<Character>();
+//        myMonsters = new ArrayList<Character>();
+//        myPlatforms = new ArrayList<Character>();
+//
+//        spaceCount = 0;
+//        fCount = 0;
+//
+//        for (int i = 0; i < 12; i++) {
+//            Platform plat1 = randomPlatform();
+//            myPlatforms.add(plat1);
+//        }
+//
+//        int yp = 500;
+//        int xp = (int) (Math.random() * 400);
+//
+//        myPlatforms.add(new Platform(1, xp, 500, 58, 15));
+//    }
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int pressed = e.getKeyCode();
 		switch (pressed) {
+		case 32:
+			playerStart=true;
+			p.changeVy(-10);
+			break;
 		case 80:
 		case 82:
 			gameState=2;

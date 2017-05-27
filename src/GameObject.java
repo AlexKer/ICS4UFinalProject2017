@@ -1,4 +1,3 @@
-import java.awt.Graphics;
 public abstract class GameObject {
 	//position, vector, dimensions
 	private int x, y, width, height;
@@ -10,7 +9,6 @@ public abstract class GameObject {
 	public void move(){
 		this.x+=vx;
 		this.y+=vy;
-		//System.out.println(x+" "+y);
 	}
 	//getter/accessor
 	public int getX(){ return this.x; }
@@ -32,7 +30,6 @@ public abstract class GameObject {
 	public int getVy(){ return vy; }
 	public void setVx(int vx0){ vx=vx0; }
 	public void setVy(int vy0){ vy=vy0; }
-	public abstract void draw(Graphics g);
 	public abstract void animate();
 	public abstract void stopAnimate();
 }
