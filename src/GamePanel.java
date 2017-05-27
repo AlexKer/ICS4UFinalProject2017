@@ -51,10 +51,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	@Override
 	public void run() {
 		//enforce border
-		if(p.getX()<100){
-			p.setX(120);
-		}else if(p.getX()>600-100){
-			p.setX(600-100);
+		if(p.getX()<50){
+			p.setX(50);
+		}else if(p.getX()>550){
+			p.setX(550);
 		}
 		if(p.getY()<10){
 			p.setY(10);
@@ -66,16 +66,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		if(playerStart)
 			p.move();
 		if(moveRight ^ moveLeft){
-			if(moveRight){ p.changeX(10); }
-			else if(moveLeft){ p.changeX(-10); }
+			if(moveRight){ p.changeX(15); }
+			else if(moveLeft){ p.changeX(-15); }
 		}
+		if(p.isMovingUp()){
 			for(int i=0;i<platforms.size();i++){
-				platforms.get(i).move();
+				platforms.get(i).move(p.getVy());
 			}
 			for(int i=0;i<powerUps.size();i++){
-				powerUps.get(i).move();
+				powerUps.get(i).move(p.getVy());
 			}
-		
+		}
 		//if platform moves off the bottom, generate new ones
 		for(int i=0;i<platforms.size();i++){
 			if(platforms.get(i).getY()>800){
@@ -87,20 +88,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				powerUps.remove(i);
 			}
 		}
-		if(numTick>15){
-			generateNewPlatform();
-			numTick=0;
-		}else{
-			numTick++;
+		if(playerStart){
+			if(numTick>15){
+				generateNewPlatform();
+				numTick=0;
+			}else{
+				numTick++;
+			}
 		}
 		if(checkGameOver()){ 
 			gameState=3; 
 		}
-		System.out.println(p.isMovingUp());
 	}
 	public void generateNewPlatform(){
 		int platformX = (int)(Math.random()*600);
-		int platformY = -(int)(Math.random()*20);
+		int platformY = -(int)(Math.random()*800);
 		platforms.add(new Platform(platformX,platformY));
 		int chance = 1+(int) (Math.random()*30);
 		if(chance<=15){
@@ -123,7 +125,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			for(int i=0;i<platforms.size();i++){
 				Platform cur=platforms.get(i);
 				g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
-						cur.getY()-cur.getHeight()/2, cur.getWidth()/2, cur.getHeight()/2, null);
+						cur.getY()-cur.getHeight()/2, cur.getWidth(), cur.getHeight(), null);
 			}
 			for(int i=0;i<powerUps.size();i++){
 				PowerUp cur=powerUps.get(i);
@@ -146,10 +148,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	public void hitPlatform(){
 		for(int i=0;i<platforms.size();i++){
 			//platform only effective if falling
-			if(!p.isMovingUp()){
+			if(p.getVy()>0){
 				if(p.collide(platforms.get(i))){
 					p.toggleMovingUp(true);
-					p.changeVy(-8);
+					p.changeVy(-18);
 				}
 			}
 		}
@@ -208,7 +210,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		switch (pressed) {
 		case 32:
 			playerStart=true;
-			p.changeVy(-10);
+			p.changeVy(-20);
 			break;
 		case 80:
 		case 82:

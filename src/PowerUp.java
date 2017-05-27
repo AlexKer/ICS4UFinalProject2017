@@ -28,8 +28,7 @@ public class PowerUp extends GameObject{
 			break;
 		}
 	}
-	@Override
-	public void move() {
+	public void move(int val) {
 		changeY(10);
 		animation.updateAnimation();
 	}

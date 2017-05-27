@@ -11,9 +11,9 @@ public class Player extends GameObject{
 	private Animation animation=stand;
 	private boolean moveUp=false;
 	public Player(int x, int y) {
-		super(x, y, 110, 200);
+		super(x, y, 110/2, 200/2);
 	}
-	private final int TERMINAL_V=20, A=2;
+	private final int TERMINAL_V=10, A=1, gTick=0;;
 	@Override
 	//move by gravity,
 	public void move() {
@@ -23,8 +23,11 @@ public class Player extends GameObject{
 			this.setVy(TERMINAL_V);
 		}
 		if(this.getVy()>0){
-			this.toggleMovingUp(false);
+			moveUp=false;
+		}else{
+			moveUp=true;
 		}
+		System.out.println(this.getVy());
 		animation.updateAnimation();
 	}
 	public Animation getAnimation(){ return animation; }
