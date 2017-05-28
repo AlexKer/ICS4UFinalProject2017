@@ -1,22 +1,14 @@
 package Graphics;
 import java.awt.image.BufferedImage;
 public class Frame {
+	//complete references (entirely copied class)
+	//https://gamedev.stackexchange.com/questions/53705/how-can-i-make-a-sprite-sheet-based-animation-system
     private BufferedImage frame;
-    private int duration;
-    public Frame(BufferedImage frame, int duration) {
+    public Frame(BufferedImage frame) {
         this.frame = frame;
-        this.duration = duration;
     }
+    //returns the BufferedImage of Frame object
     public BufferedImage getFrame() {
         return frame;
-    }
-    public void setFrame(BufferedImage frame) {
-        this.frame = frame;
-    }
-    public int getDuration() {
-        return duration;
-    }
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 }

@@ -1,7 +1,7 @@
 import java.awt.image.BufferedImage;
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
-public class PowerUp extends GameObject{
+public class Coin extends GameObject{
 	private BufferedImage[] bronzeCoin={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_1.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_2.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_3.png"))};
@@ -13,7 +13,7 @@ public class PowerUp extends GameObject{
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("gold_3.png"))};
 	private int ID;
 	private Animation animation;
-	public PowerUp(int x, int y, int ID) {
+	public Coin(int x, int y, int ID) {
 		super(x, y, 85, 50);
 		this.ID=ID;
 		switch(ID){
@@ -28,7 +28,8 @@ public class PowerUp extends GameObject{
 			break;
 		}
 	}
-	public void move(int val) {
+	public void move() {
+		System.out.println("HI");
 		changeY(10);
 		animation.updateAnimation();
 	}

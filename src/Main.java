@@ -6,9 +6,8 @@ import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
-import org.w3c.dom.Document;
 public class Main {
-	public final String spriteSheetRef = "";
+	//ref: last year's game
 	public static void main(String[] args) throws IOException,
 			InterruptedException, UnsupportedAudioFileException,
 			LineUnavailableException {
@@ -37,7 +36,6 @@ public class Main {
 			//repaint the panel, will be constantly updated
 			myPanel.repaint();
 			long after = System.currentTimeMillis();
-			
 			Thread.sleep(Math.max(0, 16 - (after - before)));
 			
 		}

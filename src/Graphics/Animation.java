@@ -3,70 +3,60 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 public class Animation {
-    private int frameCount, frameDelay, currentFrame, animationDirection, totalFrames;
+	//complete references (entirely copied class)
+	//https://gamedev.stackexchange.com/questions/53705/how-can-i-make-a-sprite-sheet-based-animation-system
+    private int frameCount, frameDelay, currentFrame, totalFrames;
     private boolean stopped;
     private List<Frame> frames = new ArrayList<Frame>();
+    //Animation object constructor, initialize all instance variables
+    //loops through BufferedImage array to copy images to the local frames List
     public Animation(BufferedImage[] frames, int frameDelay){
         this.frameDelay = frameDelay;
         this.stopped = true;
         for(int i=0;i<frames.length;i++){
-            addFrame(frames[i], frameDelay);
+            this.frames.add(new Frame(frames[i]));
         }
         this.frameCount = 0;
         this.frameDelay = frameDelay;
         this.currentFrame = 0;
-        this.animationDirection = 1;
         this.totalFrames = this.frames.size();
     }
+    //start or stop Animation object
     public void start(){
-        if(!stopped){ return; }
-        if(frames.size()==0){ return; }
-        stopped = false;
+        stopped=false;
     }
     public void stop(){
-        if(frames.size()==0){
-            return;
-        }
         stopped=true;
     }
     public void restart(){
-        if(frames.size()==0){
-            return;
-        }
         stopped=false;
         currentFrame=0;
     }
+    //reset all instance variables
     public void reset(){
         this.stopped=true;
         this.frameCount=0;
         this.currentFrame=0;
     }
-    private void addFrame(BufferedImage frame, int duration) {
-        if(duration<=0){
-            System.err.println("Invalid duration: " + duration);
-            throw new RuntimeException("Invalid duration: " + duration);
-        }
-        frames.add(new Frame(frame, duration));
-        currentFrame=0;
-    }
-
+    //returns the BufferedImage at the currentFrame index
     public BufferedImage getSprite(){
         return frames.get(currentFrame).getFrame();
     }
+    //updates Animation object at each tick (every loop of run method in GamePanel)
+    //if Animation is not stopped, increment FrameCount
+    //if FrameCount is greater than specified delay, go to the next Frame and set FrameCount to zero
+    //if currentFrame is beyond the last index in Frame Object List, set currentFrame to the first index
     public void updateAnimation(){
         if(!stopped){
             frameCount++;
             if (frameCount>frameDelay){
                 frameCount=0;
-                currentFrame+=animationDirection;
+                currentFrame+=1;
                 if(currentFrame>totalFrames-1){
                     currentFrame=0;
-                }else if(currentFrame<0){
-                    currentFrame=totalFrames-1;
                 }
             }
         }
 
     }
-    //ref: https://gamedev.stackexchange.com/questions/53705/how-can-i-make-a-sprite-sheet-based-animation-system
 }

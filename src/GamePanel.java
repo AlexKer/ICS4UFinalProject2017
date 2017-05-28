@@ -15,7 +15,9 @@ import javax.swing.JPanel;
 
 import Graphics.ImageRetrieve;
 public class GamePanel extends JPanel implements Runnable, KeyListener{
-	//TODO gravity, powerup, monster, platform, enemy
+	//NO enemies, accessories like JetPack, BubbleShield; no time
+	//updated UML diagram
+	//https://www.lucidchart.com/invitations/accept/48643b77-6943-4d20-8867-bfddaf273249
 	private static final long serialVersionUID = 1L;
 	private boolean moveRight, moveLeft;
 	BufferedImage imgBuffer = new BufferedImage(600, 800, BufferedImage.TYPE_INT_ARGB);
@@ -23,8 +25,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private BufferedImage startMenuScreen, inGameScreen, gameOverScreen;
 	private Player p;
 	private ArrayList<Platform> platforms;
-	private ArrayList<PowerUp> powerUps;
-	private int gameState=2; //GameState 1=StartMenu, 2=InGame, 3=GameOver
+	private ArrayList<Coin> coins;
+	private int gameState; //GameState 1=StartMenu, 2=InGame, 3=GameOver
 	private int score=0;
 	private boolean playerStart=false;
 	public GamePanel() throws IOException, UnsupportedAudioFileException,
@@ -33,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		ImageRetrieve.loadSpriteSheet();
 		p=new Player(1, 600);
 		platforms=new ArrayList<Platform>();
-		powerUps=new ArrayList<PowerUp>();
+		coins=new ArrayList<Coin>();
 		URL fileURL;
 		fileURL=getClass().getResource("Graphics/Hoppy_Bunny_Title.png");
 		startMenuScreen=ImageIO.read(fileURL);
@@ -68,25 +70,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			if(moveRight){ p.changeX(15); }
 			else if(moveLeft){ p.changeX(-15); }
 		}
+		//only move platforms and coins if Player object is moving upwards
 		if(p.isMovingUp()){
 			for(int i=0;i<platforms.size();i++){
-				platforms.get(i).move(p.getVy());
+				platforms.get(i).move();
 			}
-			for(int i=0;i<powerUps.size();i++){
-				powerUps.get(i).move(p.getVy());
+			for(int i=0;i<coins.size();i++){
+				coins.get(i).move();
 			}
 		}
-		//if platform moves off the bottom, generate new ones
+		//if platform or coin moves off the bottom of the screen
+		//remove it from the ArrayList
 		for(int i=0;i<platforms.size();i++){
 			if(platforms.get(i).getY()>800){
 				platforms.remove(i);
 			}
 		}
-		for(int i=0;i<powerUps.size();i++){
-			if(powerUps.get(i).getY()>800){
-				powerUps.remove(i);
+		for(int i=0;i<coins.size();i++){
+			if(coins.get(i).getY()>800){
+				coins.remove(i);
 			}
 		}
+		//if Player pressed space to start the game
+		//generate a new Platform object every 15 ticks
 		if(playerStart){
 			if(numTick>15){
 				generateNewPlatform();
@@ -99,19 +105,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			gameState=3; 
 		}
 	}
+	//randomly generate a ...
+	//x location within the width of the screen,
+	//y location outside the screen near the top (negative value),
+	//these are used then to instantiate a new Platform object and added to platforms ArrayList
+	//generate a random
 	public void generateNewPlatform(){
 		int platformX = (int)(Math.random()*600);
 		int platformY = -(int)(Math.random()*8);
-		platforms.add(new Platform(platformX,platformY));
+		platforms.add(new Platform(platformX, platformY));
 		int chance = 1+(int) (Math.random()*30);
 		if(chance<=15){
-			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 1));
+			coins.add(new Coin(platformX + 115, platformY - 80, 1));
 		}else if(chance>15 && chance<25){
-			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 2));
+			coins.add(new Coin(platformX + 115, platformY - 80, 2));
 		}else{
-			powerUps.add(new PowerUp(platformX + 115, platformY - 80, 3));
+			coins.add(new Coin(platformX + 115, platformY - 80, 3));
 		}
-		powerUps.get(powerUps.size()-1).animate();
+		coins.get(coins.size()-1).animate();
 	}
 	public void paint(Graphics g) {
 		switch(gameState){
@@ -127,8 +138,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 				g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
 						cur.getY()-cur.getHeight()/2, cur.getWidth(), cur.getHeight(), null);
 			}
-			for(int i=0;i<powerUps.size();i++){
-				PowerUp cur=powerUps.get(i);
+			for(int i=0;i<coins.size();i++){
+				Coin cur=coins.get(i);
 				g.drawImage(cur.getAnimation().getSprite(), cur.getX()-cur.getWidth()/2,
 						cur.getY()-cur.getHeight()/2, cur.getWidth(), cur.getHeight(), null);
 			}
@@ -157,9 +168,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	public void hitCoin(){
-		for(int i=0;i<powerUps.size();i++){
-			if(p.collide(powerUps.get(i))){
-				switch(powerUps.get(i).getID()){
+		for(int i=0;i<coins.size();i++){
+			if(p.collide(coins.get(i))){
+				switch(coins.get(i).getID()){
 				case 1:
 					score++;
 					break;
@@ -170,7 +181,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 					score+=3;
 					break;
 				}
-				powerUps.remove(i);
+				coins.remove(i);
 			}
 		}
 	}	
@@ -182,7 +193,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
     public void resetGame() {
     	p=new Player(1, 600);
 		platforms=new ArrayList<Platform>();
-		powerUps=new ArrayList<PowerUp>();
+		coins=new ArrayList<Coin>();
 		gameState=1;
 		for(int i=0;i<12;i++){
 			platforms.add(new Platform((int)(Math.random()*600),(int)(Math.random()*800)));
@@ -196,8 +207,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		int pressed = e.getKeyCode();
 		switch (pressed) {
 		case 32:
-			playerStart=true;
-			p.changeVy(-20);
+			if(!playerStart){
+				playerStart=true;
+				p.changeVy(-20);
+			}
 			break;
 		case 80: //P
 			gameState=2;
@@ -217,6 +230,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			
 		}
 	}
+	//stop
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int pressed = e.getKeyCode();
