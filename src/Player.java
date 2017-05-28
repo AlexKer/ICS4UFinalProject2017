@@ -11,7 +11,7 @@ public class Player extends GameObject{
 	private Animation animation=stand;
 	private boolean moveUp=false;
 	public Player(int x, int y) {
-		super(x, y, 110/2, 200/2);
+		super(x, y, 80, 130);
 	}
 	private final int TERMINAL_V=10, A=1, gTick=0;;
 	@Override
