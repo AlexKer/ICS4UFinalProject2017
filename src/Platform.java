@@ -4,14 +4,15 @@ import Graphics.ImageRetrieve;
 public class Platform extends GameObject{
 	private BufferedImage[] platform={ImageRetrieve.getSprite(ImageRetrieve.getIndex("ground_grass.png"))};
 	public Platform(int x, int y) {
-		super(x, y, 200/2, 80/2);
+		super(x, y, 100, 40);
 	}
 	private Animation animation=new Animation(platform, 10);
-	public void move(int val) {
+	//shift platform downwards by 10 pixels
+	public void move() {
 		changeY(10);
 	}
 	public Animation getAnimation(){ return animation; }
-	//one image so no need for animation
+	 //one image so no need for animation, it can be directly drawn
 	@Override
 	public void animate() { }
 	@Override
