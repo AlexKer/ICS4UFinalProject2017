@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	private boolean moveRight, moveLeft;
 	BufferedImage imgBuffer = new BufferedImage(600, 800, BufferedImage.TYPE_INT_ARGB);
 	Graphics g = imgBuffer.getGraphics();
-	private BufferedImage startMenuScreen, gameOverScreen;
+	private BufferedImage startMenuScreen, inGameScreen, gameOverScreen;
 	private Player p;
 	private ArrayList<Platform> platforms;
 	private ArrayList<PowerUp> powerUps;
@@ -34,14 +34,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		p=new Player(1, 600);
 		platforms=new ArrayList<Platform>();
 		powerUps=new ArrayList<PowerUp>();
-		for(int i=0;i<10;i++){ 
-			generateNewPlatform();
-		}
 		URL fileURL;
 		fileURL=getClass().getResource("Graphics/Hoppy_Bunny_Title.png");
 		startMenuScreen=ImageIO.read(fileURL);
 		fileURL=getClass().getResource("Graphics/Game_Over.png");
 		gameOverScreen=ImageIO.read(fileURL);
+		fileURL=getClass().getResource("Graphics/background-with-clouds.png");
+		inGameScreen=ImageIO.read(fileURL);
 		gameState=1;
 		for(int i=0;i<12;i++){
 			platforms.add(new Platform((int)(Math.random()*600),(int)(Math.random()*800)));
@@ -52,9 +51,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	public void run() {
 		//enforce border
 		if(p.getX()<50){
-			p.setX(50);
-		}else if(p.getX()>550){
 			p.setX(550);
+		}else if(p.getX()>550){
+			p.setX(50);
 		}
 		if(p.getY()<10){
 			p.setY(10);
@@ -102,7 +101,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 	}
 	public void generateNewPlatform(){
 		int platformX = (int)(Math.random()*600);
-		int platformY = -(int)(Math.random()*800);
+		int platformY = -(int)(Math.random()*8);
 		platforms.add(new Platform(platformX,platformY));
 		int chance = 1+(int) (Math.random()*30);
 		if(chance<=15){
@@ -120,6 +119,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			g.drawImage(startMenuScreen, 0, 0, null);
 			break;
 		case 2:
+			g.drawImage(inGameScreen, 0, 0, 600, 800, null);
 			g.drawImage(p.getAnimation().getSprite(), p.getX()-p.getWidth()/2, 
 					p.getY()-p.getHeight()/2, p.getWidth(), p.getHeight(), null);
 			for(int i=0;i<platforms.size();i++){
@@ -138,9 +138,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			break;
 		case 3:
 			g.drawImage(gameOverScreen, 0, 0, null);
-			g.setColor(Color.WHITE);
-			g.setFont(new Font("Arial", Font.BOLD, 24));
-			g.drawString("Final Score: " + score, 100, 300);
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("Arial", Font.BOLD, 50));
+			g.drawString("Final Score: " + score, 115, 400);
 			break;
 		}
 	}
@@ -179,31 +179,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		if(p.getY()>800){ return true; }
 		return false;
 	}
-//    public void resetGame() {
-//        // resets all variables to start new game
-//        Doodle doodle1 = new Doodle(1, 190, 540, 60, 59);
-//        myGuys.set(0, doodle1);
-//        score = 0;
-//        level = 0;
-//        nameEntered = false;
-//
-//        myBullets = new ArrayList<Character>();
-//        myMonsters = new ArrayList<Character>();
-//        myPlatforms = new ArrayList<Character>();
-//
-//        spaceCount = 0;
-//        fCount = 0;
-//
-//        for (int i = 0; i < 12; i++) {
-//            Platform plat1 = randomPlatform();
-//            myPlatforms.add(plat1);
-//        }
-//
-//        int yp = 500;
-//        int xp = (int) (Math.random() * 400);
-//
-//        myPlatforms.add(new Platform(1, xp, 500, 58, 15));
-//    }
+    public void resetGame() {
+    	p=new Player(1, 600);
+		platforms=new ArrayList<Platform>();
+		powerUps=new ArrayList<PowerUp>();
+		gameState=1;
+		for(int i=0;i<12;i++){
+			platforms.add(new Platform((int)(Math.random()*600),(int)(Math.random()*800)));
+		}
+		gameState=2; 
+		score=0;
+		playerStart=false;
+    }
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int pressed = e.getKeyCode();
@@ -212,8 +199,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			playerStart=true;
 			p.changeVy(-20);
 			break;
-		case 80:
-		case 82:
+		case 80: //P
+			gameState=2;
+			break;
+		case 82: //P
+			resetGame();
 			gameState=2;
 			break;
 		case 37: // left
