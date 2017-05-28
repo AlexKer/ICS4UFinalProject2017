@@ -13,7 +13,7 @@ public class Player extends GameObject{
 	public Player(int x, int y) {
 		super(x, y, 80, 130);
 	}
-	private final int TERMINAL_V=10, A=1, gTick=0;;
+	private final int TERMINAL_V=10, A=1;
 	@Override
 	//move by gravity,
 	public void move() {
