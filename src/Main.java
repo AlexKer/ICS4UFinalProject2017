@@ -12,9 +12,9 @@ public class Main {
 	public static void main(String[] args)
 			throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
 		JFrame myFrame = new JFrame("Hoppy Bunny"); // instantiate JFrame
-		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// terminates program when the window is closed
-															
+
 		myFrame.setSize(600, 800); // set size for the window
 		myFrame.setResizable(false); // fixed size
 		myFrame.setLocationRelativeTo(null);
