@@ -2,6 +2,7 @@ import java.awt.image.BufferedImage;
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
 public class Coin extends GameObject{
+	//use ImageRetrieve class to store different coin images into arrays
 	private BufferedImage[] bronzeCoin={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_1.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_2.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bronze_3.png"))};
@@ -13,6 +14,7 @@ public class Coin extends GameObject{
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("gold_3.png"))};
 	private int ID;
 	private Animation animation;
+	//instantiate coin Animation object depending on which ID is passed in
 	public Coin(int x, int y, int ID) {
 		super(x, y, 85, 50);
 		this.ID=ID;
@@ -28,14 +30,17 @@ public class Coin extends GameObject{
 			break;
 		}
 	}
+	//move coin downwards if move method is called, i.e. when Player is moving downwards
+	//update the Animation object to display the next frame
 	public void move() {
-		System.out.println("HI");
 		changeY(10);
 		animation.updateAnimation();
 	}
+	//getter for instance variable ID
 	public int getID(){
 		return ID;
 	}
+	//getter for Animation object for this coin
 	public Animation getAnimation(){
 		return animation;
 	}

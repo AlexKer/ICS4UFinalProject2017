@@ -8,11 +8,12 @@ public class Platform extends GameObject{
 	}
 	private Animation animation=new Animation(platform, 10);
 	//shift platform downwards by 10 pixels
+	@Override
 	public void move() {
 		changeY(10);
 	}
 	public Animation getAnimation(){ return animation; }
-	 //one image so no need for animation, it can be directly drawn
+	 //one image for platform so no need for animation, it can be directly drawn
 	@Override
 	public void animate() { }
 	@Override

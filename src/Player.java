@@ -2,8 +2,8 @@ import java.awt.image.BufferedImage;
 import Graphics.Animation;
 import Graphics.ImageRetrieve;
 public class Player extends GameObject{
-	//get sprite index associated with string name, 
-	//then pass in index to get appropriate BufferedImage in sprite sheet
+	//1. get sprite index associated with string name (ImageRetrieve.getIndex)
+	//2. then pass in index to get appropriate BufferedImage in sprite sheet (ImageRetrieve.getSprite)
 	private BufferedImage[] walking={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_walk1.png")),
 									ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_walk2.png"))};
 	private BufferedImage[] standing={ImageRetrieve.getSprite(ImageRetrieve.getIndex("bunny1_stand.png"))};
@@ -18,9 +18,16 @@ public class Player extends GameObject{
 	public Player(int x, int y) {
 		super(x, y, 80, 130);
 	}
-	//calls default super class method of move
-	//
-	//updates Animation object
+	//This move() method below does the following...
+	//Note: vy=vertical velocity
+	//1.calls super class method of move,
+	//changes vy by the acceleration constant.
+	//2.if the updated vy exceeds terminal velocity
+	//set vy to the terminal velocity constant.
+	//3.if vy is positive, player is moving down, 
+	//otherwise player is moving up;
+	//these changes are reflected by changing the boolean variable moveUp.
+	//4.update Animation object 
 	@Override
 	public void move() {
 		super.move();
@@ -37,22 +44,23 @@ public class Player extends GameObject{
 	}
 	//returns the Animation object
 	public Animation getAnimation(){ return animation; }
-	////if true, moving up, otherwise falling
+	//if true, moving up, otherwise falling
 	public boolean isMovingUp(){ return moveUp; } 
+	//changes the moveUp variable to boolean value passed in
 	public void toggleMovingUp(boolean b){ moveUp=b; } 
-	//start Animation object, and change Player's animation to walking
+	//start animation, and change Player's animation to walking
 	public void animate(){
 		animation=walk;
 	    animation.start();
 	}
-	//stop Animation object, its instance variables are reset
-	//Player object is back to the default animation of standing
+	//stop and reset Animation object
+	//Player object is back to the default animation state of standing
 	public void stopAnimate(){
 		animation.stop();
 	    animation.reset();
 	    animation=stand;
 	}
-	//collision code of GameObject, check if player touches platform or coin
+	//check if player collides with a platform or coin (GameObject)
 	public boolean collide(GameObject o){
 		if(getX()+getWidth()>=o.getX() && 
 			getX()<=o.getX()+o.getWidth() &&
